@@ -1,5 +1,5 @@
 name: Context
-on: push
+on: [push, pull_request]
 
 jobs:
   functions:
@@ -18,8 +18,14 @@ jobs:
       - name: Dump GitHub Context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
+        run: eccho "$GITHUB_CONTEXT" # purposeful typo
       - name: Dump job Context
+        if: failure() # should still run, even though prev. step fails due to typo
         env:
           JOB_CONTEXT: ${{ toJson(job) }}
         run: echo "$JOB_CONTEXT"
+      - name: Dump runner Context
+        if: always()
+        env:
+          JOB_RUNNER: ${{ toJson(runner) }}
+        run: echo "$JOB_RUNNER"
